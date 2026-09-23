@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuestionario COV · Seguridad Vial ATU</title>
+<style>
+:root{
+  --azul-noche:#0F2A47;
+  --azul-atu:#1B4F82;
+  --ambar:#E8A33D;
+  --ambar-oscuro:#C4791F;
+  --crema:#F5F2EA;
+  --verde-limon:#8BB93A;
+  --rojo:#C0392B;
+  --texto:#1B2430;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;}
+body{
+  background:var(--crema);
+  color:var(--texto);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  min-height:100%;
+}
+.wrap{max-width:760px;margin:0 auto;padding:28px 18px 60px;}
+
+header.top{
+  background:var(--azul-noche);
+  color:#fff;
+  padding:22px 18px calc(22px + env(safe-area-inset-top,0px));
+  padding-top:calc(22px + env(safe-area-inset-top,0px));
+}
+header.top .inner{max-width:760px;margin:0 auto;}
+header.top h1{margin:0 0 4px;font-size:1.45rem;font-weight:700;letter-spacing:.2px;}
+header.top p{margin:0;color:#B9CBE0;font-size:.92rem;}
+
+.stripe{height:6px;background:linear-gradient(90deg,var(--ambar) 0 33%,var(--verde-limon) 33% 66%,var(--azul-atu) 66% 100%);}
+
+.panel{background:#fff;border:1px solid #E4DFD2;border-radius:14px;padding:22px 20px;box-shadow:0 1px 3px rgba(15,42,71,.06);}
+
+#setup .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;}
+button{
+  font:inherit;
+  cursor:pointer;
+  border:none;
+  border-radius:10px;
+  padding:12px 20px;
+  font-weight:600;
+  font-size:.95rem;
+}
+.btn-primary{background:var(--azul-atu);color:#fff;}
+.btn-primary:hover{background:#153f68;}
+.btn-secondary{background:#EDE7D6;color:var(--azul-noche);}
+.btn-secondary:hover{background:#e2dabf;}
+.btn-ghost{background:transparent;color:var(--azul-atu);border:1px solid #C9D6E3;}
+
+#progressBar{
+  height:8px;border-radius:999px;background:#E7E1D2;overflow:hidden;margin:14px 0 4px;
+}
+#progressFill{height:100%;background:var(--ambar);width:0%;transition:width .25s ease;}
+#progressLabel{font-size:.85rem;color:#5B6B7C;display:flex;justify-content:space-between;}
+
+.qnum{
+  display:inline-block;background:var(--azul-atu);color:#fff;font-size:.78rem;font-weight:700;
+  padding:3px 10px;border-radius:999px;margin-bottom:12px;letter-spacing:.3px;
+}
+.qtext{font-size:1.12rem;line-height:1.45;font-weight:600;margin:0 0 18px;}
+
+.opt{
+  display:flex;align-items:flex-start;gap:12px;
+  border:1.5px solid #DCD5C3;border-radius:10px;
+  padding:12px 14px;margin-bottom:10px;cursor:pointer;
+  background:#FCFBF7;transition:border-color .15s, background .15s;
+}
+.opt:hover{border-color:var(--azul-atu);}
+.opt.selected{border-color:var(--azul-atu);background:#EAF1F8;}
+.opt.correct{border-color:var(--verde-limon);background:#F0F7E4;}
+.opt.incorrect{border-color:var(--rojo);background:#FBEAE8;}
+.opt .letter{
+  flex:0 0 26px;height:26px;border-radius:50%;background:#E7E1D2;color:var(--azul-noche);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;
+}
+.opt.selected .letter{background:var(--azul-atu);color:#fff;}
+.opt.correct .letter{background:var(--verde-limon);color:#fff;}
+.opt.incorrect .letter{background:var(--rojo);color:#fff;}
+.opt .otext{flex:1;line-height:1.4;padding-top:3px;}
+
+.navrow{display:flex;justify-content:space-between;gap:10px;margin-top:20px;}
+
+.feedback{margin-top:8px;font-size:.9rem;padding:10px 12px;border-radius:8px;display:none;}
+.feedback.show{display:block;}
+.feedback.ok{background:#F0F7E4;color:#4C6B1F;}
+.feedback.bad{background:#FBEAE8;color:#8E2A20;}
+
+#resultPanel h2{margin-top:0;color:var(--azul-noche);}
+.scoreCircle{
+  width:130px;height:130px;border-radius:50%;
+  border:10px solid var(--ambar);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.9rem;font-weight:800;color:var(--azul-noche);
+  margin:10px auto 18px;
+}
+.reviewItem{border-top:1px solid #E7E1D2;padding:14px 0;}
+.reviewItem:first-child{border-top:none;}
+.reviewItem .qt{font-weight:600;margin-bottom:8px;}
+.tagOk{color:#4C6B1F;font-weight:700;}
+.tagBad{color:#8E2A20;font-weight:700;}
+.smallnote{font-size:.85rem;color:#6a7688;margin-top:2px;}
+
+.hidden{display:none !important;}
+footer{text-align:center;color:#8a92a0;font-size:.8rem;margin-top:26px;}
+</style>
+</head>
+<body>
+<header class="top"><div class="inner">
+  <h1>Cuestionario COV — Seguridad Vial ATU</h1>
+  <p>80 preguntas de práctica · orden aleatorio de preguntas y alternativas</p>
+</div></header>
+<div class="stripe"></div>
+
+<div class="wrap">
+
+  <div id="setup" class="panel">
+    <p style="margin-top:0">Este Cuestionario maneja preguntas de orden de respuestas aleatorias en el orden </p>
+    <div class="row">
+      <button class="btn-primary" onclick="startQuiz()">Comenzar cuestionario</button>
+    </div>
+  </div>
+
+  <div id="quiz" class="panel hidden">
+    <div id="progressBar"><div id="progressFill"></div></div>
+    <div id="progressLabel"><span id="progressText">Pregunta 1 de 80</span><span id="scoreLive">Aciertos: 0</span></div>
+    <div class="qnum" id="qnum">PREGUNTA 1</div>
+    <p class="qtext" id="qtext"></p>
+    <div id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="navrow">
+      <button class="btn-ghost" id="btnRestart" onclick="confirmRestart()">Reiniciar</button>
+      <button class="btn-primary" id="btnNext" onclick="nextQuestion()" disabled>Siguiente</button>
+    </div>
+  </div>
+
+  <div id="resultPanel" class="panel hidden">
+    <h2>Resultado</h2>
+    <div class="scoreCircle" id="scoreCircle">0/80</div>
+    <p id="resultMsg" style="text-align:center;"></p>
+    <div class="row" style="justify-content:center;margin-top:10px;">
+      <button class="btn-primary" onclick="startQuiz()">Repetir con orden nuevo</button>
+      <button class="btn-secondary" onclick="toggleReview()">Ver repaso de respuestas</button>
+    </div>
+    <div id="review" class="hidden" style="margin-top:20px;"></div>
+  </div>
+
+</div>
+<footer>Material de práctica no oficial, basado en la guía de estudio ATU-COV. Verifica siempre contra tu material y fuentes oficiales.</footer>
+
+<script>
+// Cada entrada: [pregunta, respuesta correcta, distractor1, distractor2, distractor3]
+const BANK = [
+["¿Qué es la seguridad vial?","Conjunto de acciones orientadas a prevenir o evitar los riesgos de siniestros de los usuarios de las vías","Conjunto de leyes exclusivas para conductores","Un dispositivo que regula el tránsito vehicular","El sistema de multas por infracciones de tránsito"],
+["¿Qué es un siniestro?","Suceso eventual o acción de la que involuntariamente resulta daño para las personas o las cosas","Un accidente sin daños materiales ni personales","Una señal de tránsito reguladora","Un tipo de vehículo de emergencia"],
+["¿Qué es un accidente según la guía?","Hecho fortuito u ocurrencia entre uno o más vehículos en vía pública o privada, sin resultado de daño para las personas","Suceso que siempre causa lesionados","Un dispositivo de control de tránsito","Una infracción al reglamento de tránsito"],
+["¿Qué es peligro?","Toda acción que puede causar un daño personal o a otras personas","La combinación de probabilidad y consecuencia de no controlar un peligro","Una situación que aumenta la probabilidad de daño mayor","Un comportamiento que da lugar a siniestros"],
+["¿Qué es riesgo?","Combinación de la probabilidad y la consecuencia de no controlar el peligro","Toda acción que puede causar daño personal","Situación que aumenta la probabilidad de daño mayor","Comportamiento de las personas que origina siniestros"],
+["¿Qué es vulnerabilidad?","Situación que aumenta la probabilidad de causar un daño mayor","Circunstancia relacionada con el entorno que origina siniestros","Comportamiento que da lugar a siniestros","Conjunto de acciones para prevenir siniestros"],
+["¿Qué es un acto subestándar?","Comportamiento que da lugar a los principales siniestros/incidentes en vía y laborales","Circunstancia del entorno que origina siniestros","Una señal vertical preventiva","Un dispositivo de control de tránsito"],
+["¿Qué es una condición subestándar?","Circunstancia relacionada con el entorno que da lugar a los principales siniestros/incidentes","Comportamiento de las personas que origina siniestros","Un tipo de marca en el pavimento","Una acción preventiva del COV"],
+["¿Qué resulta de la prevención, responsabilidad, convivencia y respeto por la vida, sumado a la reducción del impacto de los siniestros?","Movilidad segura","Seguridad vial pasiva","Zona rígida","Vía troncal"],
+["Según la pirámide de prioridad de usuarios de la vía, ¿quién tiene mayor prioridad?","Peatones","Ciclistas","Usuarios de transporte público","Usuarios de vehículos particulares motorizados"],
+["En la pirámide de prioridad, ¿qué grupo ocupa el segundo lugar?","Ciclistas","Peatones","Usuarios de transporte de carga","Usuarios de vehículos particulares"],
+["¿Qué usuarios ocupan el tercer lugar en la pirámide de prioridad?","Usuarios y operadores del transporte público y vehículos de emergencia","Usuarios y operadores de transporte de carga","Ciclistas","Peatones"],
+["¿Qué usuarios tienen la menor prioridad en la pirámide?","Usuarios de vehículos particulares motorizados","Peatones","Ciclistas","Usuarios de transporte público"],
+["¿Cómo es la indumentaria de seguridad del personal en vía?","Gorra, chaleco con cintas reflectivas y guantes color verde limón","Gorra, chaleco y guantes color azul","Gorra roja y chaleco anaranjado","Chaleco blanco y guantes negros"],
+["¿Para qué sirven las cintas reflectivas de la indumentaria?","Mejorar la visualización en horarios con poca iluminación, especialmente de noche","Identificar el rango jerárquico del agente","Proteger contra la lluvia","Aislar del ruido del tránsito"],
+["¿Cuál es la finalidad de los muros New Jersey o maletines?","Cercar, limitar o cerrar zonas de trabajo","Delinear o canalizar carriles temporales","Apoyar al personal para dirigir peatones","Regular el tránsito vehicular y peatonal"],
+["¿De qué color son los muros New Jersey o maletines?","Color anaranjado con bandas retrorreflectantes","Color verde limón","Color azul con bandas blancas","Color rojo con bandas amarillas"],
+["¿Cuál es la finalidad de las varas luminosas?","Apoyar al personal de campo para dirigir a peatones y conductores y prevenir siniestros","Cercar zonas de trabajo","Delinear carriles temporales de circulación","Notificar prohibiciones y restricciones"],
+["¿Cuál es la finalidad de los conos de seguridad?","Delinear o canalizar carriles o vías temporales de circulación","Cercar, limitar o cerrar zonas de trabajo","Apoyar al personal para dirigir el tránsito","Regular el tránsito con luces"],
+["¿Cuál es la finalidad de los tambores o cilindros?","Cercar, limitar o cerrar zonas de trabajo","Delinear carriles temporales","Dirigir a peatones y conductores","Guiar al usuario a su destino"],
+["¿En qué se dividen las señales de tránsito?","Señales verticales y marcas en el pavimento","Señales luminosas y sonoras","Señales activas y pasivas","Señales reglamentarias y opcionales"],
+["¿Cuáles son los tipos de señales verticales?","Reguladoras, preventivas e informativas","Planas y elevadas","Activas y pasivas","Permanentes y temporales"],
+["¿Cuál es la finalidad de las señales reguladoras?","Notificar prioridades, prohibiciones, restricciones, obligaciones y autorizaciones","Advertir sobre riesgos o situaciones imprevistas","Guiar al usuario a su destino","Delinear carriles temporales"],
+["¿Qué ocurre si se incumple una señal reguladora?","Constituye una falta que puede acarrear un delito","No tiene ninguna consecuencia","Solo genera una advertencia verbal","Se aplica automáticamente una multa sin proceso"],
+["¿Cuál es la finalidad de las señales preventivas?","Advertir sobre la existencia y naturaleza de riesgos o situaciones imprevistas","Notificar prohibiciones y restricciones","Guiar al usuario a su destino de forma simple y directa","Cercar zonas de trabajo"],
+["¿Cuál es la finalidad de las señales informativas?","Guiar al usuario y darle información para llegar a su destino de forma simple y directa","Advertir sobre riesgos en la vía","Notificar prohibiciones y restricciones","Delinear carriles de circulación"],
+["¿Qué son las marcas planas en el pavimento?","Líneas horizontales y transversales, flechas, símbolos y letras aplicadas sobre el pavimento","Delineadores y tachas elevadas","Señales verticales reguladoras","Dispositivos luminosos de control"],
+["¿Qué son las marcas elevadas en el pavimento?","Notifican prioridades, prohibiciones, restricciones, obligaciones y autorizaciones (ej. tachas, delineadores)","Líneas horizontales aplicadas sobre el pavimento","Señales verticales informativas","Dispositivos para cercar zonas de trabajo"],
+["¿Qué colores tiene el semáforo?","Rojo, ámbar/amarillo y verde","Rojo, azul y verde","Amarillo, blanco y rojo","Verde, morado y rojo"],
+["¿Qué significa la luz roja del semáforo?","Detenerse","Prevención","Iniciar marcha","Acelerar"],
+["¿Qué significa la luz ámbar o amarilla del semáforo?","Prevención","Detenerse","Iniciar marcha / continuar","Ceder el paso"],
+["¿Qué significa la luz verde del semáforo?","Iniciar marcha / continuar","Detenerse","Prevención","Precaución máxima"],
+["¿Qué significa un toque de silbato fuerte y prolongado (uno)?","Detener el tránsito o algún vehículo","Reanudar la circulación","Acelerar la circulación","Detener la marcha ante vehículos de emergencia"],
+["¿Qué significan dos toques de silbato regulares y de prolongación corta?","Reanudar la circulación","Detener el tránsito","Acelerar la circulación","Detener ante vehículos de emergencia"],
+["¿Qué significan tres o más toques de silbato fuertes y cortos?","Acelerar la circulación, flujo continuo y constante","Detener el tránsito","Reanudar la circulación","Ceder el paso a peatones"],
+["¿Qué significan tres toques de silbato fuertes y prolongados?","Detener la marcha ante la presencia de vehículos de emergencia u oficiales","Reanudar la circulación","Acelerar el flujo vehicular","Detener un solo vehículo"],
+["Antes de dirigir el tránsito, ¿qué se debe evaluar?","Volumen del tránsito, número de peatones, duración del congestionamiento y presencia de dispositivos de control","Solo la cantidad de vehículos de emergencia","Únicamente el horario del día","Solo el estado del semáforo"],
+["¿Por cuánto tiempo mínimo debe observar el funcionario una intersección antes de dirigir el tránsito?","No menor de 5 minutos","1 minuto","10 minutos","30 segundos"],
+["¿Cuál es una de las funciones principales al dirigir el tránsito?","Remover objetos o vehículos que interrumpan el libre tránsito","Multar directamente a los infractores","Reparar semáforos averiados","Emitir licencias de conducir"],
+["¿Qué tipo de giro genera mayor congestión y accidentalidad, según la guía?","El giro a la izquierda","El giro a la derecha","El giro en U","Ir en línea recta"],
+["¿Qué debe garantizar el agente respecto a los vehículos de emergencia y oficiales?","El paso libre y seguro","Que se detengan primero que los demás","Que paguen peaje preferencial","Que usen una vía exclusiva las 24 horas"],
+["¿Qué debe garantizar el agente respecto a los peatones al cruzar?","Su preferencia de paso","Que crucen solo con luz roja para vehículos","Que usen siempre un puente peatonal","Que paguen una tarifa de cruce"],
+["Según las acciones preventivas, ¿dónde debe ubicarse el personal?","En zonas de alta afluencia vehicular o peatonal, visible y con visión panorámica del crucero","Siempre detrás de un poste","Solo en las aceras","En cualquier lugar sin importar la visibilidad"],
+["¿Dentro de qué marco deben actuar las acciones preventivas de tránsito?","Marco irrestricto de respeto a los Derechos Humanos y disposiciones legales","Marco de discrecionalidad total del agente","Marco exclusivo del reglamento interno de la empresa","Marco de prioridad económica"],
+["¿Cuál de estos es un ejemplo de acto subestándar?","Subir o bajar del vehículo en movimiento","Falta de señalización en la vía","Pistas en mal estado","Ausencia de dispositivos de control"],
+["¿Cuál de estos es un ejemplo de condición subestándar?","Falta de señalización y pistas en mal estado","Subir o bajar del vehículo en movimiento","Cruzar fuera del paso peatonal","Exceso de pasajeros en el vehículo"],
+["En los puntos ciegos de un bus, ¿qué representa el número 1?","Visión delantera","Espejos retrovisores laterales","Puntos ciegos","Visión trasera"],
+["En los puntos ciegos de un bus, ¿qué representa el número 2?","Espejos retrovisores laterales","Visión delantera","Puntos ciegos","Zona de carga"],
+["En los puntos ciegos de un bus, ¿qué representa el número 3?","Puntos ciegos","Visión delantera","Espejos retrovisores laterales","Zona de descenso"],
+["¿Qué es un punto ciego?","Zona sin visibilidad para el conductor, especialmente lateral y trasera","Área donde el semáforo no funciona","Zona exclusiva para peatones","Lugar donde se prohíbe estacionar"],
+["¿Qué es la ATU?","Organismo técnico especializado adscrito al Ministerio de Transportes y Comunicaciones (MTC)","Una municipalidad distrital de Lima","Una empresa privada de transporte","Un sindicato de conductores"],
+["¿Con qué ley se creó la ATU?","Ley N.° 30900","Ley N.° 30945","Ley N.° 27815","Ley N.° 29090"],
+["¿Cuándo se publicó la Ley N.° 30900 de creación de la ATU?","28 de diciembre de 2018","8 de mayo de 2019","19 de junio de 2019","26 de junio de 2012"],
+["¿Cuál es el reglamento de la Ley de creación de la ATU?","Decreto Supremo N.° 005-2019-MTC","Resolución Ministerial N.° 249-2022-MTC/01","Ley N.° 30945","Resolución de Presidencia Ejecutiva N.°127-2020-ATU/PE"],
+["¿Qué ley modificó por primera vez la Ley de creación de la ATU?","Ley N.° 30945","Ley N.° 30900","Ley N.° 27815","Decreto Supremo N.° 005-2019-MTC"],
+["¿Cuándo se publicó la Ley N.° 30945, que modificó la Ley 30900?","8 de mayo de 2019","28 de diciembre de 2018","19 de junio de 2019","22 de septiembre de 2026"],
+["¿Qué comprende el Sistema Integrado de Transporte (SIT)?","Metro, Corredores Complementarios y Metropolitano (COSAC I)","Solo el Metropolitano","Solo los Corredores Complementarios","Metro y taxis formales"],
+["¿Cuántos Corredores Complementarios existen actualmente?","4","3","5","6"],
+["¿Cuál es el Corredor Complementario N°1?","Panamericana","Javier Prado","Tacna-Garcilaso-Arequipa","San Juan de Lurigancho"],
+["¿Cuál es el Corredor Complementario N°3?","Tacna-Garcilaso-Arequipa","Panamericana","Javier Prado","San Juan de Lurigancho"],
+["¿Qué significa COSAC?","Corredor Segregado de Alta Capacidad","Corredor Seguro de Alta Circulación","Control Operativo de Seguridad y Control","Corredor de Servicio de Alta Capacidad"],
+["¿A qué corredor corresponde el COSAC I?","El Metropolitano","Corredor Complementario N°1","Corredor Complementario N°4","El Metro de Lima"],
+["Según la Resolución Ministerial N.° 249-2022-MTC/01, ¿qué porcentaje de aforo se permite en los buses?","100% del número de asientos","70% del número de asientos","50% de la capacidad total","120% incluyendo pasajeros de pie"],
+["¿Quiénes tienen pase libre en el sistema de transporte?","Personas con discapacidad, personal de la PNP y bomberos","Estudiantes universitarios y escolares","Adultos mayores de 60 años únicamente","Trabajadores municipales"],
+["¿Los niños menores de 5 años pagan pasaje?","No, no pagan","Sí, pagan tarifa reducida","Sí, pagan tarifa completa","Solo pagan en horas punta"],
+["¿Cuál es el número de emergencia de la PNP?","105","116","106","911"],
+["¿Cuál es el número de emergencia de Bomberos?","116","105","106","119"],
+["¿Cuál es el número de emergencia del SAMU?","106","105","116","103"],
+["¿Qué son las vías troncales?","Vía de dos calzadas con ocho o más carriles, con calzadas interiores de uso exclusivo del transporte público masivo","Cualquier avenida principal de la ciudad","Vía de un solo carril de uso exclusivo peatonal","Vía exclusiva para vehículos de carga"],
+["¿Qué es un carril?","Parte de la calzada destinada al tránsito de una sola fila de vehículos","Toda la zona de la vía destinada a la circulación","El área donde se prohíbe estacionar","La zona delimitada para el cruce de peatones"],
+["¿Qué es la calzada?","Zona de la vía destinada a la circulación de vehículos","Parte de la calzada para una sola fila de vehículos","Área donde se prohíbe estacionar 24 horas","Zona exclusiva para ciclistas"],
+["¿Qué es una zona rígida?","Área de la vía donde se prohíbe estacionar las 24 horas del día","Área destinada exclusivamente al transporte de carga","Zona donde solo pueden circular peatones","Vía de doble sentido demarcada con línea amarilla"],
+["¿Qué es la hora valle?","Momento del día con mayor afluencia de personas y menor cantidad de buses en los corredores","Momento del día con menor afluencia de personas","Hora en que se realiza el chatarreo de unidades","Hora en que los buses no cobran pasaje"],
+["¿Qué es el chatarreo?","Retirar de circulación las unidades que no están aptas para prestar servicio","El cobro electrónico de pasajes","La colocación de conos para segregar paraderos","El mantenimiento preventivo de buses"],
+["¿Qué permite la Tarjeta Lima Pass?","Realizar el cobro electrónico de los pasajes en los buses de los corredores complementarios","Acceder gratis a cualquier medio de transporte","Pagar infracciones de tránsito","Obtener la licencia de conducir"],
+["¿Qué diferencia principal tiene el transporte regular frente a los Corredores Complementarios?","El transporte regular no garantiza una cantidad de paraderos específicos, seguridad, velocidad, calidad y comodidad","El transporte regular es más rápido","El transporte regular tiene más paraderos segregados","El transporte regular usa carriles exclusivos"],
+["Un accidente de tránsito con daños solo materiales, sin lesionados ni muertos, se clasifica como:","Accidente simple","Accidente con lesionados","Accidente con muertos","Siniestro grave"],
+["¿Hasta cuántos días después del accidente se considera «accidente con muertos» si la persona fallece como consecuencia del mismo?","30 días","7 días","15 días","60 días"],
+["¿Cuál es el objetivo principal de la seguridad vial activa?","Prevenir que se produzca el accidente","Reducir las secuelas después del accidente","Sancionar a los infractores","Informar sobre el estado del tránsito"],
+["¿Cuál es el objetivo principal de la seguridad vial pasiva?","Reducir las posibles secuelas en los pasajeros y el vehículo en caso de accidente","Evitar que se produzca el accidente","Regular el flujo vehicular","Emitir licencias de conducir"]
+];
+
+let order = [];       // índices de BANK en el orden mezclado
+let current = 0;
+let score = 0;
+let answered = false;
+let userAnswers = []; // {questionIndex, chosenText, correctText, isCorrect, options}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startQuiz(){
+  order = shuffle(BANK.map((_,i)=>i));
+  current = 0;
+  score = 0;
+  userAnswers = [];
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('resultPanel').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered = false;
+  const idx = order[current];
+  const item = BANK[idx];
+  const question = item[0];
+  const correctText = item[1];
+  const opts = shuffle([item[1], item[2], item[3], item[4]]);
+
+  document.getElementById('qnum').textContent = 'PREGUNTA ' + (current+1);
+  document.getElementById('qtext').textContent = question;
+  document.getElementById('progressText').textContent = 'Pregunta ' + (current+1) + ' de ' + order.length;
+  document.getElementById('scoreLive').textContent = 'Aciertos: ' + score;
+  document.getElementById('progressFill').style.width = (current/order.length*100) + '%';
+
+  const cont = document.getElementById('options');
+  cont.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  opts.forEach((optText,i)=>{
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = '<div class="letter">'+letters[i]+'</div><div class="otext">'+optText+'</div>';
+    div.onclick = ()=>selectOption(div, optText, correctText, opts, question);
+    cont.appendChild(div);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.textContent = '';
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('btnNext').textContent = (current === order.length-1) ? 'Ver resultado' : 'Siguiente';
+}
+
+function selectOption(div, chosenText, correctText, opts, question){
+  if(answered) return;
+  answered = true;
+  const isCorrect = chosenText === correctText;
+  if(isCorrect) score++;
+
+  Array.from(document.getElementById('options').children).forEach(child=>{
+    const txt = child.querySelector('.otext').textContent;
+    if(txt === correctText) child.classList.add('correct');
+    if(child === div && !isCorrect) child.classList.add('incorrect');
+    if(child === div) child.classList.add('selected');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.classList.add('show');
+  if(isCorrect){
+    fb.classList.add('ok');
+    fb.textContent = 'Correcto.';
+  } else {
+    fb.classList.add('bad');
+    fb.textContent = 'Incorrecto. La respuesta correcta es: ' + correctText;
+  }
+
+  userAnswers.push({question, chosen: chosenText, correct: correctText, isCorrect});
+  document.getElementById('scoreLive').textContent = 'Aciertos: ' + score;
+  document.getElementById('btnNext').disabled = false;
+}
+
+function nextQuestion(){
+  if(!answered) return;
+  if(current === order.length-1){
+    showResult();
+    return;
+  }
+  current++;
+  renderQuestion();
+}
+
+function showResult(){
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('resultPanel').classList.remove('hidden');
+  document.getElementById('scoreCircle').textContent = score + '/' + order.length;
+  const pct = Math.round(score/order.length*100);
+  let msg = 'Obtuviste ' + pct + '% de respuestas correctas.';
+  if(pct >= 80) msg += ' Muy buen dominio del temario.';
+  else if(pct >= 60) msg += ' Vas bien, repasa los temas que fallaste.';
+  else msg += ' Conviene repasar la guía de estudio antes de intentarlo de nuevo.';
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('review').classList.add('hidden');
+  buildReview();
+}
+
+function buildReview(){
+  const cont = document.getElementById('review');
+  cont.innerHTML = '';
+  userAnswers.forEach((a,i)=>{
+    const div = document.createElement('div');
+    div.className = 'reviewItem';
+    const tag = a.isCorrect ? '<span class="tagOk">Correcto</span>' : '<span class="tagBad">Incorrecto</span>';
+    div.innerHTML =
+      '<div class="qt">'+(i+1)+'. '+a.question+'</div>'+
+      '<div>'+tag+' — Tu respuesta: '+a.chosen+'</div>'+
+      (a.isCorrect ? '' : '<div class="smallnote">Respuesta correcta: '+a.correct+'</div>');
+    cont.appendChild(div);
+  });
+}
+
+function toggleReview(){
+  document.getElementById('review').classList.toggle('hidden');
+}
+
+function confirmRestart(){
+  if(confirm('¿Reiniciar el cuestionario? Perderás el progreso actual.')){
+    startQuiz();
+  }
+}
+</script>
+</body>
+</html>
