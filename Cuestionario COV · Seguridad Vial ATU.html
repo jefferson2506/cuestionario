@@ -118,14 +118,14 @@ footer{text-align:center;color:#8a92a0;font-size:.8rem;margin-top:26px;}
 <body>
 <header class="top"><div class="inner">
   <h1>Cuestionario COV — Seguridad Vial ATU</h1>
-  <p>80 preguntas de práctica · orden aleatorio de preguntas y alternativas</p>
+  <p>Exámenes de 10 preguntas · banco ampliado y orden aleatorio</p>
 </div></header>
 <div class="stripe"></div>
 
 <div class="wrap">
 
   <div id="setup" class="panel">
-    <p style="margin-top:0">Este Cuestionario maneja preguntas de orden de respuestas aleatorias en el orden </p>
+    <p style="margin-top:0">Cada examen contiene 10 preguntas seleccionadas de todo el banco. Al repetir, se prioriza obtener preguntas nuevas.</p>
     <div class="row">
       <button class="btn-primary" onclick="startQuiz()">Comenzar cuestionario</button>
     </div>
@@ -133,7 +133,7 @@ footer{text-align:center;color:#8a92a0;font-size:.8rem;margin-top:26px;}
 
   <div id="quiz" class="panel hidden">
     <div id="progressBar"><div id="progressFill"></div></div>
-    <div id="progressLabel"><span id="progressText">Pregunta 1 de 80</span><span id="scoreLive">Aciertos: 0</span></div>
+    <div id="progressLabel"><span id="progressText">Pregunta 1 de 10</span><span id="scoreLive">Aciertos: 0</span></div>
     <div class="qnum" id="qnum">PREGUNTA 1</div>
     <p class="qtext" id="qtext"></p>
     <div id="options"></div>
@@ -146,7 +146,7 @@ footer{text-align:center;color:#8a92a0;font-size:.8rem;margin-top:26px;}
 
   <div id="resultPanel" class="panel hidden">
     <h2>Resultado</h2>
-    <div class="scoreCircle" id="scoreCircle">0/80</div>
+    <div class="scoreCircle" id="scoreCircle">0/10</div>
     <p id="resultMsg" style="text-align:center;"></p>
     <div class="row" style="justify-content:center;margin-top:10px;">
       <button class="btn-primary" onclick="startQuiz()">Repetir con orden nuevo</button>
@@ -161,6 +161,36 @@ footer{text-align:center;color:#8a92a0;font-size:.8rem;margin-top:26px;}
 <script>
 // Cada entrada: [pregunta, respuesta correcta, distractor1, distractor2, distractor3]
 const BANK = [
+["Los usuarios de la vía son","Peatones, ciclistas, pasajeros y conductores","Peatones, ciclistas, pasajeros y vecinos","Peatones, vendedor ambulante, pasajeros y conductores","N.A."],
+["¿Por qué es importante la señalética en la vía y en los paraderos?","Organizar y brindar seguridad en la vía y los paraderos, así como proteger la vida e integridad de quienes transitan","Para visualizar únicamente las vías principales","Para indicar lugares turísticos únicamente","Para mostrar rutas exclusivas solo a conductores"],
+["En la ATU, el proceso de gestión por procesos busca","Mejorar la eficiencia y calidad de los servicios públicos","Reducir el personal administrativo","Eliminar la participación ciudadana","Aumentar la informalidad"],
+["¿Qué proceso es clave para prevenir actos de corrupción en el sector público?","Gestión de Riesgos","Gestión Financiera","Gestión de Recursos Humanos","Gestión Ambiental"],
+["¿Qué es un paso peatonal?","Parte de la calzada destinada al cruce de peatones","Parte de la calzada destinada al tránsito de una fila de vehículos","Parte de la calzada de uso exclusivo de vehículos","Una zona exclusiva para bicicletas"],
+["¿Qué significan las siglas COSAC?","Corredor Segregado de Alta Capacidad","Comisión de Seguridad y Control","Consorcio de Operadores de Servicios de Alta Capacidad","Sistema Integrado de Transporte"],
+["¿Qué es un triángulo de seguridad?","Una señal indicativa de seguridad que señala el estacionamiento provisional por emergencia de un vehículo","Una señal para indicar que el conductor está detenido","Un elemento exclusivo para controlar peatones","Una marca para zonas de carga"],
+["¿Qué se debe hacer ante un evento sísmico en la vía o en el corredor?","Mantener la calma, colocarse a buen recaudo y seguir las indicaciones de las autoridades","Llamar a un compañero y tomar un autobús","Buscar refugio bajo un poste","Esperar dentro de la calzada"],
+["¿Qué es el semáforo?","Un dispositivo operado eléctricamente que regula la circulación de vehículos y peatones con luces roja, ámbar y verde","Un dispositivo operado manualmente con luces de tránsito","Un panel informativo exclusivo para restricciones de velocidad","Una señal vertical de prioridad"],
+["¿Qué es una calzada?","Parte de la vía destinada a la circulación de vehículos y eventualmente al cruce de peatones y animales","Parte de la vía destinada al uso de peatones","Un área verde entre la vereda y la pista","Una zona exclusiva para estacionar"],
+["¿A qué se denominan vías troncales?","Una vía de dos calzadas con ocho o más carriles y calzadas interiores exclusivas para transporte público masivo","Rutas complementarias al Metropolitano","Vías paralelas a los corredores complementarios","Cualquier vía de un solo sentido"],
+["¿Con qué servicios cuenta el COSAC I (Metropolitano)?","Servicios regulares, servicios expresos y rutas alimentadoras","Solo servicios regulares","Solo rutas alimentadoras","Solo servicios expresos"],
+["¿Por qué es importante comunicar y notificar las incidencias durante el funcionamiento del sistema?","Para mantener el control de los usuarios y velar por la seguridad del servicio","Para justificar únicamente el trabajo realizado","Para no tener que realizar informes posteriores","Solo para mantener informado al supervisor"],
+["¿Cuál NO es una responsabilidad ética de los servidores públicos?","Realizar acciones para beneficio propio","Respetar la confidencialidad","Actuar con imparcialidad","Cumplir los procedimientos de la entidad"],
+["¿Cómo se define un accidente de tránsito?","Evento que causa daño a personas o cosas como consecuencia directa de la circulación de vehículos","Un incidente que se supera sin contratiempos","Un hecho voluntario sin daño a personas o cosas","Una infracción sin daños"],
+["¿Quiénes tienen derecho al pase libre en el transporte regular?","Personas con discapacidad, personal de la PNP y bomberos","Escolares y universitarios","Deportistas profesionales","Todos los adultos mayores"],
+["¿Qué es la segregación?","La colocación de conos, barreras jersey o barriles para separar una vía exclusiva","La señalización vertical informativa","La definición de vías troncales","El control manual del semáforo"],
+["¿Cuánto tiempo se puede estacionar en una zona rígida?","Está prohibido estacionar las 24 horas del día","Se puede estacionar unos minutos","Se puede estacionar máximo una hora","Solo se puede estacionar de noche"],
+["¿Cuál es la finalidad de los elementos de seguridad vial activa?","Evitar que se produzca el accidente","Reducir las consecuencias después del accidente","Identificar rutas turísticas","Regular el transporte convencional"],
+["¿Qué significan las siglas SIT?","Sistema Integrado de Transporte","Sistema de Integración del Transporte","Sistema Integrado de Tránsito","Servicio Informativo de Transporte"],
+["¿Qué elementos de seguridad se necesitan para agilizar el tránsito vehicular en una intersección?","Chaleco retrorreflectante, guantes reflectantes y vara luminosa","Solo un chaleco","Solo conos de seguridad","Solo una señal informativa"],
+["¿Qué se entiende por seguridad vial?","Salvaguardar la integridad física de las personas que transitan por la vía pública, disminuyendo el riesgo","El funcionamiento coordinado del semáforo","Las características físicas de la vía","La clasificación de las rutas"],
+["¿A qué se denominan paraderos de alta demanda?","Paraderos que atienden una gran cantidad de usuarios","Paraderos con mucho comercio","Paraderos usados solo por horas","Paraderos con baja afluencia"],
+["¿Cómo se clasifican las señales de tránsito?","Reguladoras, preventivas e informativas","Reguladoras, preventivas y enunciativas","Normativas, informativas y enunciativas","Obligatorias, opcionales y temporales"],
+["¿Por qué es importante contar con implementos de seguridad?","Para prevenir accidentes de tránsito","Para mejorar la imagen personal","Para evitar llamadas de atención del supervisor","Solo para cumplir con el uniforme"],
+["¿Qué es una vía de doble sentido?","Una vía con tránsito vehicular en sentidos contrarios demarcada por una línea continua amarilla","Una intersección sin semáforos","Un carril exclusivo segregado","Una vía solo para vehículos de emergencia"],
+["Para acelerar y mantener continuo el flujo vehicular, ¿cuántos toques de silbato se realizan?","Tres o más toques fuertes y cortos","Dos toques regulares y cortos","Un toque fuerte y prolongado","Tres toques fuertes y prolongados"],
+["¿Cuál es uno de los principios fundamentales del proceso de modernización del transporte de la ATU?","La eficiencia y la calidad del servicio","La exclusión de grupos minoritarios","La eliminación del transporte público","La descentralización de recursos"],
+["Mientras una persona conduce, ¿qué acción está permitida?","Conducir con una mano sobre el volante cuando sea necesario accionar algún comando del vehículo","Compartir el asiento con un niño menor de un año","Dejar que otra persona tome el control de la dirección","Usar ambas manos solamente fuera de zonas urbanas"],
+["¿Cuál es el propósito principal del Código de Ética en el sector público?","Regular la conducta de los servidores públicos","Incrementar la productividad","Mejorar la infraestructura pública","Aumentar el presupuesto estatal"],
 ["¿Qué es la seguridad vial?","Conjunto de acciones orientadas a prevenir o evitar los riesgos de siniestros de los usuarios de las vías","Conjunto de leyes exclusivas para conductores","Un dispositivo que regula el tránsito vehicular","El sistema de multas por infracciones de tránsito"],
 ["¿Qué es un siniestro?","Suceso eventual o acción de la que involuntariamente resulta daño para las personas o las cosas","Un accidente sin daños materiales ni personales","Una señal de tránsito reguladora","Un tipo de vehículo de emergencia"],
 ["¿Qué es un accidente según la guía?","Hecho fortuito u ocurrencia entre uno o más vehículos en vía pública o privada, sin resultado de daño para las personas","Suceso que siempre causa lesionados","Un dispositivo de control de tránsito","Una infracción al reglamento de tránsito"],
@@ -243,7 +273,7 @@ const BANK = [
 ["¿Cuál es el objetivo principal de la seguridad vial pasiva?","Reducir las posibles secuelas en los pasajeros y el vehículo en caso de accidente","Evitar que se produzca el accidente","Regular el flujo vehicular","Emitir licencias de conducir"]
 ];
 
-let order = [];       // índices de BANK en el orden mezclado
+let order = [];       // índices de BANK en el orden del examen
 let current = 0;
 let score = 0;
 let answered = false;
@@ -259,7 +289,19 @@ function shuffle(arr){
 }
 
 function startQuiz(){
-  order = shuffle(BANK.map((_,i)=>i));
+  const saved = sessionStorage.getItem('atuLastExam');
+  const previous = saved ? JSON.parse(saved) : [];
+  const allIndexes = shuffle(BANK.map((_,i)=>i));
+  const newIndexes = allIndexes.filter(i=>!previous.includes(i));
+
+  order = newIndexes.slice(0, 10);
+  if(order.length < 10){
+    const remaining = allIndexes.filter(i=>!order.includes(i));
+    order = order.concat(remaining.slice(0, 10-order.length));
+  }
+  order = shuffle(order);
+  sessionStorage.setItem('atuLastExam', JSON.stringify(order));
+
   current = 0;
   score = 0;
   userAnswers = [];
@@ -275,7 +317,7 @@ function renderQuestion(){
   const item = BANK[idx];
   const question = item[0];
   const correctText = item[1];
-  const opts = shuffle([item[1], item[2], item[3], item[4]]);
+  const opts = shuffle(item.slice(1));
 
   document.getElementById('qnum').textContent = 'PREGUNTA ' + (current+1);
   document.getElementById('qtext').textContent = question;
